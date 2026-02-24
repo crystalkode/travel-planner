@@ -1,0 +1,105 @@
+// ------------------------------------------------------
+// Datasource & Generator
+// ------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// ------------------------------------------------------
+// Enums
+// ------------------------------------------------------
+
+enum ActivityType {
+  ACTIVITY
+  TRAVEL
+}
+
+enum SchedulingType {
+  FIXED
+  FLEXIBLE
+}
+
+
+// ------------------------------------------------------
+// Models
+// ------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+
+  trips     Trip[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Trip {
+  id        String   @id @default(uuid())
+  name      String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  days      Day[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Day {
+  id        String   @id @default(uuid())
+
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  /// Logical day number (Day 1, Day 2, etc.)
+  index     Int
+
+  /// Optional display title (e.g. "Arrival Day")
+  title     String?
+
+  activities Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tripId, index])
+}
+
+
+model Activity {
+  id              String          @id @default(uuid())
+
+  dayId           String
+  day             Day             @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?
+
+  type            ActivityType    @default(ACTIVITY)
+  schedulingType  SchedulingType  @default(FLEXIBLE)
+
+  /// Null = Unscheduled
+  startTime       DateTime?
+  endTime         DateTime?
+
+  /// Inline location info (Phase 1 simplification)
+  locationName    String?
+  locationAddress String?
+  mapUrl          String?
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([dayId])
+  @@index([dayId, startTime])
+}
