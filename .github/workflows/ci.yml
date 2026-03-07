@@ -25,6 +25,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
 
       - name: Type check
         # run: pnpm tsc --noEmit
