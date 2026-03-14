@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/trips"
+method: GET
+order: 2154662985272666

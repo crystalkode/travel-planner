@@ -1,0 +1,8 @@
+$kind: http-request
+name: "createUser"
+url: "{{baseUrl}}/users"
+method: POST
+body:
+  type: json
+  content: '{"email":"test3@example.com"}'
+order: 1773459949959
