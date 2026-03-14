@@ -1,0 +1,18 @@
+$kind: http-request
+name: createTrip
+url: "{{baseUrl}}/trips"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Japan Trip",
+      "userId":"{{userId}}
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+      pm.environment.set("tripId", json.id);
+    language: text/javascript
+order: 1773459357313

@@ -1,0 +1,19 @@
+$kind: http-request
+name: createDay
+url: "{{baseUrl}}/trips/:tripId/days"
+method: POST
+pathVariables:
+  tripId: "{{tripId}}"
+body:
+  type: json
+  content: |-
+    {
+      "title": "Onsen"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+      pm.environment.set("dayId", json.id);
+    language: text/javascript
+order: 1773459947797

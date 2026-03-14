@@ -1,0 +1,8 @@
+name: Local Development
+values:
+  - key: baseUrl
+    value: ''
+    enabled: true
+  - key: dayId
+    value: ''
+    enabled: true
