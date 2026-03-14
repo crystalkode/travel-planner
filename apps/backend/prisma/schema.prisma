@@ -7,7 +7,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -15,32 +15,22 @@ model User {
 }
 
 model Trip {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   name      String
-
-  // Optional while in DRAFT
-  startDate DateTime?
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   endDate   DateTime?
-
+  startDate DateTime?
   status    TripStatus @default(DRAFT)
 
-  userId    String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  days      Day[]
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum TripStatus {
-  DRAFT
-  IN_PROGRESS
-  COMPLETED
+  days Day[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Day {
-  id         String     @id @default(uuid())
-  tripId     String
+  id     String @id @default(uuid()) @db.Uuid
+  tripId String @db.Uuid
   /// Logical day number (Day 1, Day 2, etc.)
   index      Int
   /// Optional display title (e.g. "Arrival Day")
@@ -54,25 +44,37 @@ model Day {
 }
 
 model Activity {
-  id              String         @id @default(uuid())
-  dayId           String
+  id    String @id @default(uuid()) @db.Uuid
+  dayId String @db.Uuid
+
+  position Int
+
   title           String
   description     String?
   type            ActivityType   @default(ACTIVITY)
   schedulingType  SchedulingType @default(FLEXIBLE)
-  /// Null = Unscheduled
+
   startTime       DateTime?
   endTime         DateTime?
-  /// Inline location info (Phase 1 simplification)
+
   locationName    String?
   locationAddress String?
   mapUrl          String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  day             Day            @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  day Day @relation(fields: [dayId], references: [id], onDelete: Cascade)
 
   @@index([dayId])
+  @@index([dayId, position])
   @@index([dayId, startTime])
+}
+
+enum TripStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
 }
 
 enum ActivityType {
