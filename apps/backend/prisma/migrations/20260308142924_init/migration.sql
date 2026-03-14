@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "TripStatus" AS ENUM ('DRAFT', 'IN_PROGRESS', 'COMPLETED');
+
+-- CreateEnum
 CREATE TYPE "ActivityType" AS ENUM ('ACTIVITY', 'TRAVEL');
 
 -- CreateEnum
@@ -6,7 +9,7 @@ CREATE TYPE "SchedulingType" AS ENUM ('FIXED', 'FLEXIBLE');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -16,19 +19,22 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Trip" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "userId" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3),
+    "startDate" TIMESTAMP(3),
+    "status" "TripStatus" NOT NULL DEFAULT 'DRAFT',
 
     CONSTRAINT "Trip_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Day" (
-    "id" TEXT NOT NULL,
-    "tripId" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "tripId" UUID NOT NULL,
     "index" INTEGER NOT NULL,
     "title" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -39,8 +45,8 @@ CREATE TABLE "Day" (
 
 -- CreateTable
 CREATE TABLE "Activity" (
-    "id" TEXT NOT NULL,
-    "dayId" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "dayId" UUID NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "type" "ActivityType" NOT NULL DEFAULT 'ACTIVITY',
