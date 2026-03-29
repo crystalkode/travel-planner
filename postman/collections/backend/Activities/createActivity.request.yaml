@@ -1,0 +1,13 @@
+$kind: http-request
+name: createActivity
+url: "{{baseUrl}}/days/:dayId/activities"
+method: POST
+pathVariables:
+  dayId: "{{dayId}}"
+body:
+  type: json
+  content: |-
+    {
+        "title": "TeamLab"
+    }
+order: 1773463045677

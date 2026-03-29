@@ -1,21 +1,26 @@
 import express from "express"
 import * as tripService from "../services/tripService"
+import { AppError } from "../errors/AppError"
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const router = express.Router()
 
-router.get("/", async (req, res) => {
-  try {
-    const trips = await tripService.getTrips()
-    res.json(trips)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Failed to fetch trips" })
-  }
-})
+router.get("/", asyncHandler(async (req, res) => {
+  const trips = await tripService.getTrips()
+  
+  res.json(trips)
+}))
 
-router.post("/", async (req, res) => {
-  try {
+router.post("/", asyncHandler(async (req, res) => {
+
     const { name, startDate, endDate, userId } = req.body
+
+    if (!userId || typeof userId !== "string") {
+      throw new AppError("User ID required", 400);
+    }
+    if (!name || typeof name !== "string") {
+      throw new AppError("Trip title is required", 400);
+    }
 
     const trip = await tripService.createTrip({
       name,
@@ -25,11 +30,8 @@ router.post("/", async (req, res) => {
     })
 
     res.status(201).json(trip)
+}))
 
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Failed to create trip" })
-  }
-})
+
 
 export default router
