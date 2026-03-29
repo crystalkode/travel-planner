@@ -1,28 +1,49 @@
-import { Router } from "express"
-import { prisma } from "../db/prisma"
-import { Prisma } from "@prisma/client"
+import { Router, Request, Response } from "express";
+import { prisma } from "../db/prisma";
+import { AppError } from "../errors/AppError";
+import { asyncHandler } from "../middleware/asyncHandler";
 
-const router = Router()
+const router = Router();
 
-router.post("/", async (req, res) => {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email: req.body.email,
-      },
-    })
-
-    res.json(user)
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      return res.status(400).json({ error: "Email already exists" })
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+      throw new AppError("Email is required", 400);
     }
-    res.status(500).json({ error: "Failed to create user" })
-  }
-})
 
-export default router
+    if (!email || typeof email !== "string") {
+      throw new AppError("Valid email is required", 400);
+    }
 
+    const user = await prisma.user.create({
+      data: { email: req.body.email },
+    });
+
+    res.json(user);
+  })
+);
+
+router.get(
+  "/:userId",
+  asyncHandler(async (req, res) => {
+    const userId = req.params.userId as string;
+
+    if (!userId) {
+      throw new AppError("User ID required", 400);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    res.json(user);
+  })
+);
+
+export default router;

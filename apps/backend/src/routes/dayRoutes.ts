@@ -1,20 +1,25 @@
-import express from "express"
-import * as dayService from "../services/dayService"
+import express from "express";
+import * as dayService from "../services/dayService";
+import { AppError } from "../errors/AppError";
+import { asyncHandler } from "../middleware/asyncHandler";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/trips/:tripId/days", async (req, res) => {
-  try {
-    const tripId = req.params.tripId
-    const { title } = req.body
+router.post(
+  "/trips/:tripId/days",
+  asyncHandler(async (req, res) => {
+    const tripId = req.params.tripId as string;
 
-    const day = await dayService.createDay(tripId, title)
+    if (!tripId || typeof tripId !== "string") {
+      throw new AppError("Trip ID required", 400);
+    }
 
-    res.json(day)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Failed to create day" })
-  }
-})
+    const { title } = req.body;
 
-export default router
+    const day = await dayService.createDay(tripId, title);
+
+    res.json(day);
+  })
+);
+
+export default router;

@@ -1,18 +1,27 @@
-import express from "express"
-import * as activityService from "../services/activityService"
+import express from "express";
+import * as activityService from "../services/activityService";
+import { asyncHandler } from "../middleware/asyncHandler";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/days/:dayId/activities", async (req, res) => {
-  try {
-    const activity = await activityService.createActivity(req.params.dayId, req.body)
-    
-    res.status(201).json(activity)
-    
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Failed to create activity" })
-  }
-})
+router.get(
+  "/days/:dayId/activities",
+  asyncHandler(async (req, res) => {
+    const activities = await activityService.getActivities();
+    res.json(activities);
+  })
+);
 
-export default router
+router.post(
+  "/days/:dayId/activities",
+  asyncHandler(async (req, res) => {
+    const activity = await activityService.createActivity(
+      req.params.dayId as string,
+      req.body
+    );
+
+    res.status(201).json(activity);
+  })
+);
+
+export default router;
