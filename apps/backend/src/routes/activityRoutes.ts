@@ -32,4 +32,11 @@ router.patch(
   })
 );
 
+router.delete(
+  "/activities/:activityId",
+  asyncHandler(async (req, res) => {
+    await activityService.deleteActivity(req.params.activityId as string);
+    res.status(204).send();
+  })
+);
 export default router;
