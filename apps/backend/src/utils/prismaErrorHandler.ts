@@ -10,7 +10,7 @@ export function handlePrismaError(error: unknown, contextMessage?: string) {
           `${contextMessage || "Resource"} already exists${
             target ? `: ${target}` : ""
           }`,
-          409
+          409,
         );
 
       case "P2003": // Foreign key constraint failed
@@ -19,17 +19,24 @@ export function handlePrismaError(error: unknown, contextMessage?: string) {
           `${contextMessage || "Related resource"} not found${
             fieldName ? `: ${fieldName}` : ""
           }`,
-          404
+          404,
         );
 
       case "P2007": //invalid input syntax for type uuid
         const uuid = (error.meta as any)?.field_name;
 
-                return new AppError(
+        return new AppError(
           `${contextMessage || "Related resource"} not found${
             uuid ? `: ${uuid}` : ""
           }`,
-          400
+          400,
+        );
+
+      case "P2025": // Record to update not found
+        const meta = error.meta as { modelName?: string; cause?: string };
+        return new AppError(
+          contextMessage ? `${contextMessage} not found` : "Resource not found",
+          404,
         );
 
       // add more Prisma codes here if needed

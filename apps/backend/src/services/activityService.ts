@@ -1,4 +1,5 @@
 import { prisma } from "../db/prisma";
+import { Prisma, SchedulingType } from "@prisma/client";
 import { handlePrismaError } from "../utils/prismaErrorHandler";
 import { AppError } from "../errors/AppError";
 
@@ -50,5 +51,46 @@ export async function getActivities(dayId: string) {
     });
   } catch (error) {
     throw handlePrismaError(error, `Activities for Day ${dayId}`);
+  }
+}
+
+type UpdateActivityInput = Partial<
+  Pick<
+    Prisma.ActivityUpdateInput,
+    | "title"
+    | "description"
+    | "type"
+    | "schedulingType"
+    | "startTime"
+    | "endTime"
+    | "locationName"
+    | "locationAddress"
+    | "mapUrl"
+  >
+>;
+
+export async function updateActivity(
+  activityId: string,
+  input: UpdateActivityInput,
+) {
+  if (!activityId) throw new AppError("Activity ID is required", 400);
+  if (Object.keys(input).length === 0)
+    throw new AppError("Activity data is required", 400);
+
+  const validSchedulingTypes = Object.values(SchedulingType);
+
+  if (
+    input.schedulingType &&
+    !Object.values(SchedulingType).includes(input.schedulingType as SchedulingType)
+  ) {
+    throw new AppError("Invalid schedulingType", 400);
+  }
+  try {
+    return await prisma.activity.update({
+      where: { id: activityId },
+      data: input,
+    });
+  } catch (error) {
+    throw handlePrismaError(error, `Activity ${activityId}`);
   }
 }

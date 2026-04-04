@@ -24,4 +24,12 @@ router.post(
   })
 );
 
+router.patch(
+  "/activities/:activityId",
+  asyncHandler(async (req, res) => {
+    const activity = await activityService.updateActivity(req.params.activityId as string, req.body);
+    res.json(activity);
+  })
+);
+
 export default router;
