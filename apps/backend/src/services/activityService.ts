@@ -77,8 +77,6 @@ export async function updateActivity(
   if (Object.keys(input).length === 0)
     throw new AppError("Activity data is required", 400);
 
-  const validSchedulingTypes = Object.values(SchedulingType);
-
   if (
     input.schedulingType &&
     !Object.values(SchedulingType).includes(input.schedulingType as SchedulingType)
@@ -90,6 +88,15 @@ export async function updateActivity(
       where: { id: activityId },
       data: input,
     });
+  } catch (error) {
+    throw handlePrismaError(error, `Activity ${activityId}`);
+  }
+}
+
+export async function deleteActivity(activityId: string) {
+  if (!activityId) throw new AppError("Activity ID is required", 400);
+  try {
+    return await prisma.activity.delete({ where: { id: activityId } });
   } catch (error) {
     throw handlePrismaError(error, `Activity ${activityId}`);
   }
