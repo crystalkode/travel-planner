@@ -7,7 +7,7 @@ const router = express.Router();
 router.get(
   "/days/:dayId/activities",
   asyncHandler(async (req, res) => {
-    const activities = await activityService.getActivities();
+    const activities = await activityService.getActivities(req.params.dayId as string);
     res.json(activities);
   })
 );

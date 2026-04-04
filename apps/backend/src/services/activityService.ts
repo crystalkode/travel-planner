@@ -40,6 +40,15 @@ export async function createActivity(dayId: string, data: CreateActivityInput) {
   }
 }
 
-export async function getActivities() {
-  return prisma.activity.findMany();
+export async function getActivities(dayId: string) {
+  // return prisma.activity.findMany(); //returns all activities
+  if (!dayId) throw new AppError("Day ID is required", 400);
+
+  try {
+    return await prisma.activity.findMany({
+      where: { dayId },
+    });
+  } catch (error) {
+    throw handlePrismaError(error, `Activities for Day ${dayId}`);
+  }
 }
