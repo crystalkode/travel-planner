@@ -7,7 +7,7 @@ export interface Trip {
 };
 
 export interface CreateTripRequest {
-  userId: string;
+  // userId?: string; //TODO: add auth and implement this properly
   name: string;
   startDate?: string;
   endDate?: string;
