@@ -15,9 +15,6 @@ router.post("/", asyncHandler(async (req, res) => {
 
     const { name, startDate, endDate, userId } = req.body
 
-      const DEV_USER_ID =
-    "";
-
     //TEMP: hack in the backend to keep the flow close to the authenticated version
     // if (!userId || typeof userId !== "string") {
     //   throw new AppError("User ID required", 400);
@@ -31,7 +28,7 @@ router.post("/", asyncHandler(async (req, res) => {
       startDate,
       endDate,
       // userId
-      userId: DEV_USER_ID
+      userId: process.env.DEV_USER_ID!
     })
 
     res.status(201).json(trip)
