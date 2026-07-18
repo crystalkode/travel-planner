@@ -15,9 +15,13 @@ router.post("/", asyncHandler(async (req, res) => {
 
     const { name, startDate, endDate, userId } = req.body
 
-    if (!userId || typeof userId !== "string") {
-      throw new AppError("User ID required", 400);
-    }
+      const DEV_USER_ID =
+    "";
+
+    //TEMP: hack in the backend to keep the flow close to the authenticated version
+    // if (!userId || typeof userId !== "string") {
+    //   throw new AppError("User ID required", 400);
+    // }
     if (!name || typeof name !== "string") {
       throw new AppError("Trip title is required", 400);
     }
@@ -26,7 +30,8 @@ router.post("/", asyncHandler(async (req, res) => {
       name,
       startDate,
       endDate,
-      userId
+      // userId
+      userId: DEV_USER_ID
     })
 
     res.status(201).json(trip)

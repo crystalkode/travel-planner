@@ -1,13 +1,18 @@
 import './index.css'
-import { Button } from "@/components/ui/button"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import {HomePage} from "./pages/HomePage";
+import { TripsPage } from './pages/TripsPage';
 
 function App() {
 
   return (
-    <main className="min-h-screen p-6">
-      <h1 className="text-2xl font-bold">Travel Planner</h1>
-      <Button children="Create a Trip" variant="outline"/>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/trips" element={<TripsPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
