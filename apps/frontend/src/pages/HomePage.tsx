@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { getHealth } from "@/api/healthApi";
 
 export function HomePage() {
@@ -17,6 +18,8 @@ export function HomePage() {
       </Button>
 
       <p>{status}</p>
+
+      <Link to="/trips">Go to Trips Page</Link>
     </>
   );
 }
