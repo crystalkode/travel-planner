@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { tripApi } from "@/api/tripApi";
-import type { Trip } from "@/types/trip";
+import type { Trip, CreateTripRequest } from "@/types/trip";
 import { TripCard } from "@/components/trip/TripCard";
 import { TripDialog } from "@/components/trip/CreateTripDialog";
 
@@ -9,25 +8,39 @@ export function TripsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [openTripDialog, setOpenTripDialog] = useState(false);
+
+  const loadTrips = async () => {
+    try {
+      setLoading(true);
+
+      const result = await tripApi.getTrips();
+      console.log(result)
+      setTrips(result);
+    } catch (err) {
+      setError("Failed to load trips");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateTrip = async (name: string) => {
+    try {
+      const request: CreateTripRequest = {
+        name,
+      };
+      await tripApi.createTrip(request);
+      await loadTrips();
+
+      setOpenTripDialog(false);
+    } catch (err) {
+      // Keep dialog open so user can retry
+    }
+  };
 
   useEffect(() => {
-    async function loadTrips() {
-      try {
-        const result = await tripApi.getTrips();
-        setTrips(result);
-      } catch (err) {
-        setError("Failed to load trips");
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadTrips();
   }, []);
-
-  const handleCreateTrip = () => {
-    console.log("Create Trip Pressed");
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -36,12 +49,16 @@ export function TripsPage() {
     <>
       <div className="grid gap-4 p-16">
         <h1>Trips</h1>
-        {trips.map((trip) => (
-          <TripCard trip={trip} />
+        {trips.map((trip, index) => (
+          <TripCard key={index} trip={trip} />
         ))}
       </div>
 
-        <TripDialog createTrip={handleCreateTrip}/>
+      <TripDialog
+        open={openTripDialog}
+        toggleOpen={setOpenTripDialog}
+        onCreateTrip={handleCreateTrip}
+      />
     </>
   );
 }
