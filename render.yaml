@@ -19,7 +19,6 @@ projects:
                   property: connectionString
             region: oregon
             buildCommand: pnpm install && pnpm --filter backend build
-            preDeployCommand: pnpm --filter backend db:deploy
             startCommand: pnpm --filter backend start
             autoDeployTrigger: commit
         databases:
