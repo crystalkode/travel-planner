@@ -14,3 +14,7 @@ export const updateTripSchema = z
       error: "Provide at least one field to update",
     },
   );
+
+  export const tripIdParamSchema = z.object({
+    tripId: z.uuid(),
+  });
