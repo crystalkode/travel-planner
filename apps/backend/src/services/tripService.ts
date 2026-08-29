@@ -37,3 +37,14 @@ export async function updateTrip(tripId: string, input: UpdateTripInput) {
 export async function getTrips() {
   return prisma.trip.findMany();
 }
+
+export async function getTripById(tripId: string) {
+  return prisma.trip.findUnique({
+    where: { id: tripId },
+    include: {
+      days: {
+        orderBy: { index: "asc" },
+      },
+    },
+  });
+}
