@@ -25,3 +25,23 @@ export async function createDay(tripId: string, title?: string) {
     throw handlePrismaError(error, `Trip ${tripId}`)
   }
 }
+
+export async function updateDay(dayId: string, title?: string) {
+  try {
+    return await prisma.day.update({
+      where: { id: dayId },
+      data: { title },
+    })
+  } catch (error) {
+    throw handlePrismaError(error, `Day ${dayId}`)
+  }
+}
+
+export async function deleteDay(dayId: string) {
+  if (!dayId) throw new AppError("Day ID is required", 400);
+  try {
+    return await prisma.day.delete({ where: { id: dayId } });
+  } catch (error) {
+    throw handlePrismaError(error, `Day ${dayId}`);
+  }
+}
