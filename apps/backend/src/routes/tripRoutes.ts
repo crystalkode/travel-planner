@@ -87,4 +87,21 @@ router.patch(
   }),
 );
 
+router.delete(
+  "/:tripId",
+  asyncHandler(async (req, res) => {
+    const params = tripIdParamSchema.safeParse(req.params);
+
+    if (!params.success) {
+      return res.status(400).json({ error: params.error });
+    }
+
+    const { tripId } = params.data;
+
+    await tripService.deleteTrip(tripId);
+
+    res.status(204).send();
+  }),
+);
+
 export default router;
