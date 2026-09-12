@@ -48,3 +48,12 @@ export async function getTripById(tripId: string) {
     },
   });
 }
+
+export async function deleteTrip(tripId: string) {
+    if (!tripId) throw new AppError("Trip ID is required", 400);
+  try {
+    return await prisma.trip.delete({ where: { id: tripId } });
+  } catch (error) {
+    throw handlePrismaError(error, `Trip ${tripId}`);
+  }
+}
